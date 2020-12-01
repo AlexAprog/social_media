@@ -1,0 +1,3 @@
+module.exports = {
+	SECRET_KEY: 'SDFSDF_DSFSDSDF3334CXV_DSF_SDF',
+};
