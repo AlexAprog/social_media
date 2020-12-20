@@ -26,5 +26,32 @@ module.exports = {
 				throw new Error(err);
 			}
 		},
+		deleteComment: async function (_, { commentId }, ctx) {
+			const user = chechAuth(ctx);
+			const comment = await ctx.prisma.comment.findUnique({
+				where: {
+					id: +commentId,
+				},
+			});
+
+			if (!comment) {
+				throw new Error('Comment to delete does not exist');
+			}
+
+			if (comment.userId != user.id) {
+				throw new Error('Comment can delete the only creator');
+			}
+
+			try {
+				const comment = await ctx.prisma.comment.delete({
+					where: {
+						id: +commentId,
+					},
+				});
+				return comment;
+			} catch (error) {
+				throw new Error(error);
+			}
+		},
 	},
 };

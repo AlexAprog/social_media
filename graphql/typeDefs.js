@@ -36,6 +36,7 @@ const typeDefs = gql`
 		createPost(body: String!): Post!
 		deletePost(postId: ID!): String!
 		createComment(postId: ID!, body: String): Comment!
+		deleteComment(commentId: ID!): Comment!
 	}
 `;
 
