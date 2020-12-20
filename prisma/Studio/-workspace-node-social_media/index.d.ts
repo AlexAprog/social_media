@@ -457,7 +457,8 @@ export declare const CommentDistinctFieldEnum: {
   id: 'id',
   body: 'body',
   userId: 'userId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  postId: 'postId'
 };
 
 export declare type CommentDistinctFieldEnum = (typeof CommentDistinctFieldEnum)[keyof typeof CommentDistinctFieldEnum]
@@ -1047,6 +1048,7 @@ export type Comment = {
   body: string
   userId: number
   createdAt: Date
+  postId: number
 }
 
 
@@ -1061,42 +1063,50 @@ export type AggregateComment = {
 export type CommentAvgAggregateOutputType = {
   id: number
   userId: number
+  postId: number
 }
 
 export type CommentSumAggregateOutputType = {
   id: number
   userId: number
+  postId: number
 }
 
 export type CommentMinAggregateOutputType = {
   id: number
   userId: number
+  postId: number
 }
 
 export type CommentMaxAggregateOutputType = {
   id: number
   userId: number
+  postId: number
 }
 
 
 export type CommentAvgAggregateInputType = {
   id?: true
   userId?: true
+  postId?: true
 }
 
 export type CommentSumAggregateInputType = {
   id?: true
   userId?: true
+  postId?: true
 }
 
 export type CommentMinAggregateInputType = {
   id?: true
   userId?: true
+  postId?: true
 }
 
 export type CommentMaxAggregateInputType = {
   id?: true
   userId?: true
+  postId?: true
 }
 
 export type AggregateCommentArgs = {
@@ -1128,10 +1138,13 @@ export type CommentSelect = {
   body?: boolean
   userId?: boolean
   createdAt?: boolean
+  postId?: boolean
+  Post?: boolean | PostArgs
   User?: boolean | UserArgs
 }
 
 export type CommentInclude = {
+  Post?: boolean | PostArgs
   User?: boolean | UserArgs
 }
 
@@ -1146,6 +1159,8 @@ export type CommentGetPayload<
   ? 'include' extends U
     ? Comment  & {
       [P in TrueKeys<S['include']>]:
+      P extends 'Post'
+      ? PostGetPayload<S['include'][P]> :
       P extends 'User'
       ? UserGetPayload<S['include'][P]> : never
     }
@@ -1153,6 +1168,8 @@ export type CommentGetPayload<
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Comment ? Comment[P]
 : 
+      P extends 'Post'
+      ? PostGetPayload<S['select'][P]> :
       P extends 'User'
       ? UserGetPayload<S['select'][P]> : never
     }
@@ -1339,6 +1356,8 @@ export declare class Prisma__CommentClient<T> implements Promise<T> {
   private _requestPromise?;
   constructor(_dmmf: DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+  Post<T extends PostArgs = {}>(args?: Subset<T, PostArgs>): CheckSelect<T, Prisma__PostClient<Post | null>, Prisma__PostClient<PostGetPayload<T> | null>>;
 
   User<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null>, Prisma__UserClient<UserGetPayload<T> | null>>;
 
@@ -2185,10 +2204,12 @@ export type PostSelect = {
   userId?: boolean
   createdAt?: boolean
   User?: boolean | UserArgs
+  Comment?: boolean | FindManyCommentArgs
 }
 
 export type PostInclude = {
   User?: boolean | UserArgs
+  Comment?: boolean | FindManyCommentArgs
 }
 
 export type PostGetPayload<
@@ -2203,14 +2224,18 @@ export type PostGetPayload<
     ? Post  & {
       [P in TrueKeys<S['include']>]:
       P extends 'User'
-      ? UserGetPayload<S['include'][P]> : never
+      ? UserGetPayload<S['include'][P]> :
+      P extends 'Comment'
+      ? Array<CommentGetPayload<S['include'][P]>> : never
     }
   : 'select' extends U
     ? {
       [P in TrueKeys<S['select']>]:P extends keyof Post ? Post[P]
 : 
       P extends 'User'
-      ? UserGetPayload<S['select'][P]> : never
+      ? UserGetPayload<S['select'][P]> :
+      P extends 'Comment'
+      ? Array<CommentGetPayload<S['select'][P]>> : never
     }
   : Post
 : Post
@@ -2397,6 +2422,8 @@ export declare class Prisma__PostClient<T> implements Promise<T> {
   readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
   User<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null>, Prisma__UserClient<UserGetPayload<T> | null>>;
+
+  Comment<T extends FindManyCommentArgs = {}>(args?: Subset<T, FindManyCommentArgs>): CheckSelect<T, Promise<Array<Comment>>, Promise<Array<CommentGetPayload<T>>>>;
 
   private get _document();
   /**
@@ -2663,6 +2690,8 @@ export type CommentWhereInput = {
   body?: StringFilter | string
   userId?: IntFilter | number
   createdAt?: DateTimeFilter | Date | string
+  postId?: IntFilter | number
+  Post?: PostRelationFilter | PostWhereInput
   User?: UserRelationFilter | UserWhereInput
 }
 
@@ -2671,6 +2700,7 @@ export type CommentOrderByInput = {
   body?: SortOrder
   userId?: SortOrder
   createdAt?: SortOrder
+  postId?: SortOrder
 }
 
 export type CommentWhereUniqueInput = {
@@ -2706,6 +2736,7 @@ export type PostWhereInput = {
   userId?: IntFilter | number
   createdAt?: DateTimeFilter | Date | string
   User?: UserRelationFilter | UserWhereInput
+  Comment?: CommentListRelationFilter
 }
 
 export type PostOrderByInput = {
@@ -2749,12 +2780,14 @@ export type UserUpdateManyMutationInput = {
 export type CommentCreateInput = {
   body: string
   createdAt?: Date | string
+  Post: PostCreateOneWithoutCommentInput
   User: UserCreateOneWithoutCommentsInput
 }
 
 export type CommentUpdateInput = {
   body?: string | StringFieldUpdateOperationsInput
   createdAt?: Date | string | DateTimeFieldUpdateOperationsInput
+  Post?: PostUpdateOneRequiredWithoutCommentInput
   User?: UserUpdateOneRequiredWithoutCommentsInput
 }
 
@@ -2781,12 +2814,14 @@ export type PostCreateInput = {
   body: string
   createdAt?: Date | string
   User: UserCreateOneWithoutPostsInput
+  Comment?: CommentCreateManyWithoutPostInput
 }
 
 export type PostUpdateInput = {
   body?: string | StringFieldUpdateOperationsInput
   createdAt?: Date | string | DateTimeFieldUpdateOperationsInput
   User?: UserUpdateOneRequiredWithoutPostsInput
+  Comment?: CommentUpdateManyWithoutPostInput
 }
 
 export type PostUpdateManyMutationInput = {
@@ -2864,6 +2899,11 @@ export type PostListRelationFilter = {
   none?: PostWhereInput
 }
 
+export type PostRelationFilter = {
+  is?: PostWhereInput
+  isNot?: PostWhereInput
+}
+
 export type UserRelationFilter = {
   is?: UserWhereInput
   isNot?: UserWhereInput
@@ -2932,9 +2972,21 @@ export type PostUpdateManyWithoutUserInput = {
   upsert?: PostUpsertWithWhereUniqueWithoutUserInput | Enumerable<PostUpsertWithWhereUniqueWithoutUserInput>
 }
 
+export type PostCreateOneWithoutCommentInput = {
+  create?: PostCreateWithoutCommentInput
+  connect?: PostWhereUniqueInput
+}
+
 export type UserCreateOneWithoutCommentsInput = {
   create?: UserCreateWithoutCommentsInput
   connect?: UserWhereUniqueInput
+}
+
+export type PostUpdateOneRequiredWithoutCommentInput = {
+  create?: PostCreateWithoutCommentInput
+  connect?: PostWhereUniqueInput
+  update?: PostUpdateWithoutCommentDataInput
+  upsert?: PostUpsertWithoutCommentInput
 }
 
 export type UserUpdateOneRequiredWithoutCommentsInput = {
@@ -2961,11 +3013,28 @@ export type UserCreateOneWithoutPostsInput = {
   connect?: UserWhereUniqueInput
 }
 
+export type CommentCreateManyWithoutPostInput = {
+  create?: CommentCreateWithoutPostInput | Enumerable<CommentCreateWithoutPostInput>
+  connect?: CommentWhereUniqueInput | Enumerable<CommentWhereUniqueInput>
+}
+
 export type UserUpdateOneRequiredWithoutPostsInput = {
   create?: UserCreateWithoutPostsInput
   connect?: UserWhereUniqueInput
   update?: UserUpdateWithoutPostsDataInput
   upsert?: UserUpsertWithoutPostsInput
+}
+
+export type CommentUpdateManyWithoutPostInput = {
+  create?: CommentCreateWithoutPostInput | Enumerable<CommentCreateWithoutPostInput>
+  connect?: CommentWhereUniqueInput | Enumerable<CommentWhereUniqueInput>
+  set?: CommentWhereUniqueInput | Enumerable<CommentWhereUniqueInput>
+  disconnect?: CommentWhereUniqueInput | Enumerable<CommentWhereUniqueInput>
+  delete?: CommentWhereUniqueInput | Enumerable<CommentWhereUniqueInput>
+  update?: CommentUpdateWithWhereUniqueWithoutPostInput | Enumerable<CommentUpdateWithWhereUniqueWithoutPostInput>
+  updateMany?: CommentUpdateManyWithWhereNestedInput | Enumerable<CommentUpdateManyWithWhereNestedInput>
+  deleteMany?: CommentScalarWhereInput | Enumerable<CommentScalarWhereInput>
+  upsert?: CommentUpsertWithWhereUniqueWithoutPostInput | Enumerable<CommentUpsertWithWhereUniqueWithoutPostInput>
 }
 
 export type NestedIntFilter = {
@@ -3021,6 +3090,7 @@ export type NestedStringFilter = {
 export type CommentCreateWithoutUserInput = {
   body: string
   createdAt?: Date | string
+  Post: PostCreateOneWithoutCommentInput
 }
 
 export type LikeCreateWithoutUserInput = {
@@ -3030,6 +3100,7 @@ export type LikeCreateWithoutUserInput = {
 export type PostCreateWithoutUserInput = {
   body: string
   createdAt?: Date | string
+  Comment?: CommentCreateManyWithoutPostInput
 }
 
 export type CommentUpdateWithWhereUniqueWithoutUserInput = {
@@ -3050,6 +3121,7 @@ export type CommentScalarWhereInput = {
   body?: StringFilter | string
   userId?: IntFilter | number
   createdAt?: DateTimeFilter | Date | string
+  postId?: IntFilter | number
 }
 
 export type CommentUpsertWithWhereUniqueWithoutUserInput = {
@@ -3109,6 +3181,12 @@ export type PostUpsertWithWhereUniqueWithoutUserInput = {
   create: PostCreateWithoutUserInput
 }
 
+export type PostCreateWithoutCommentInput = {
+  body: string
+  createdAt?: Date | string
+  User: UserCreateOneWithoutPostsInput
+}
+
 export type UserCreateWithoutCommentsInput = {
   username?: string | null
   password?: string | null
@@ -3116,6 +3194,17 @@ export type UserCreateWithoutCommentsInput = {
   email: string
   likes?: LikeCreateManyWithoutUserInput
   posts?: PostCreateManyWithoutUserInput
+}
+
+export type PostUpdateWithoutCommentDataInput = {
+  body?: string | StringFieldUpdateOperationsInput
+  createdAt?: Date | string | DateTimeFieldUpdateOperationsInput
+  User?: UserUpdateOneRequiredWithoutPostsInput
+}
+
+export type PostUpsertWithoutCommentInput = {
+  update: PostUpdateWithoutCommentDataInput
+  create: PostCreateWithoutCommentInput
 }
 
 export type UserUpdateWithoutCommentsDataInput = {
@@ -3164,6 +3253,12 @@ export type UserCreateWithoutPostsInput = {
   likes?: LikeCreateManyWithoutUserInput
 }
 
+export type CommentCreateWithoutPostInput = {
+  body: string
+  createdAt?: Date | string
+  User: UserCreateOneWithoutCommentsInput
+}
+
 export type UserUpdateWithoutPostsDataInput = {
   username?: string | NullableStringFieldUpdateOperationsInput | null
   password?: string | NullableStringFieldUpdateOperationsInput | null
@@ -3178,9 +3273,21 @@ export type UserUpsertWithoutPostsInput = {
   create: UserCreateWithoutPostsInput
 }
 
+export type CommentUpdateWithWhereUniqueWithoutPostInput = {
+  where: CommentWhereUniqueInput
+  data: CommentUpdateWithoutPostDataInput
+}
+
+export type CommentUpsertWithWhereUniqueWithoutPostInput = {
+  where: CommentWhereUniqueInput
+  update: CommentUpdateWithoutPostDataInput
+  create: CommentCreateWithoutPostInput
+}
+
 export type CommentUpdateWithoutUserDataInput = {
   body?: string | StringFieldUpdateOperationsInput
   createdAt?: Date | string | DateTimeFieldUpdateOperationsInput
+  Post?: PostUpdateOneRequiredWithoutCommentInput
 }
 
 export type CommentUpdateManyDataInput = {
@@ -3199,11 +3306,18 @@ export type LikeUpdateManyDataInput = {
 export type PostUpdateWithoutUserDataInput = {
   body?: string | StringFieldUpdateOperationsInput
   createdAt?: Date | string | DateTimeFieldUpdateOperationsInput
+  Comment?: CommentUpdateManyWithoutPostInput
 }
 
 export type PostUpdateManyDataInput = {
   body?: string | StringFieldUpdateOperationsInput
   createdAt?: Date | string | DateTimeFieldUpdateOperationsInput
+}
+
+export type CommentUpdateWithoutPostDataInput = {
+  body?: string | StringFieldUpdateOperationsInput
+  createdAt?: Date | string | DateTimeFieldUpdateOperationsInput
+  User?: UserUpdateOneRequiredWithoutCommentsInput
 }
 
 /**
