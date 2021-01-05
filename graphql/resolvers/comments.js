@@ -1,3 +1,4 @@
+const { AuthenticationError } = require('apollo-server-express');
 const chechAuth = require('../../utils/chech-auth');
 
 module.exports = {
@@ -39,7 +40,7 @@ module.exports = {
 			}
 
 			if (comment.userId != user.id) {
-				throw new Error('Comment can delete the only creator');
+				throw new AuthenticationError('Comment can delete the only creator');
 			}
 
 			try {

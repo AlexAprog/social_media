@@ -1,5 +1,7 @@
 const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
+const { createServer } = require('http');
+const { ApolloServer, PubSub } = require('apollo-server-express');
+
 const prisma = require('./PrismaClient');
 
 const typeDefs = require('./graphql/typeDefs');
@@ -19,18 +21,26 @@ const resolvers = require('./graphql/resolvers');
 // 	.then((user) => console.log(user))
 // 	.catch((err) => console.log(err));
 
-const server = new ApolloServer({
+const pubsub = new PubSub();
+
+const apolloServer = new ApolloServer({
 	typeDefs,
 	resolvers,
 	context: ({ req }) => ({
 		prisma,
 		req,
+		pubsub,
 	}),
 });
 
 const app = express();
-server.applyMiddleware({ app });
+apolloServer.applyMiddleware({ app });
 
-app.listen({ port: 4000 }, () =>
-	console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`),
-);
+const server = createServer(app);
+apolloServer.installSubscriptionHandlers(server);
+
+const PORT = 4000;
+server.listen(PORT, () => {
+	console.log(`🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`);
+	console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${apolloServer.subscriptionsPath}`);
+});

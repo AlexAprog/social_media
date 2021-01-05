@@ -32,6 +32,8 @@ model Like {
   id        Int      @id @default(autoincrement())
   userId    Int
   createdAt DateTime @default(now())
+  postId    Int
+  Post      Post     @relation(fields: [postId], references: [id])
   User      User     @relation(fields: [userId], references: [id])
 }
 
@@ -41,5 +43,6 @@ model Post {
   userId    Int
   createdAt DateTime  @default(now())
   User      User      @relation(fields: [userId], references: [id])
-  Comment   Comment[]
+  comments  Comment[]
+  likes     Like[]
 }

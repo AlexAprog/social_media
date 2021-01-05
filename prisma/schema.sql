@@ -31,6 +31,10 @@
 --     "createdAt" TIMESTAMP NOT NULL DEFAULT now()
 -- )
 
-ALTER TABLE "public". "Comment"
-ADD COLUMN "postId" INTEGER NOT NULL,
-ADD FOREIGN KEY ("postId") REFERENCES "public"."Post"
+-- ALTER TABLE "public". "Comment"
+-- ADD COLUMN "postId" INTEGER NOT NULL,
+-- ADD FOREIGN KEY ("postId") REFERENCES "public"."Post"
+
+-- ALTER TABLE "public". "Like"
+-- ADD COLUMN "postId" INTEGER NOT NULL,
+-- ADD FOREIGN KEY ("postId") REFERENCES "public"."Post"
